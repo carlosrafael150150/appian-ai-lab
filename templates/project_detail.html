@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ project.name }} - Appian AI Lab</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f6f8;
+            color: #202124;
+        }
+
+        header {
+            background: #1f2937;
+            color: white;
+            padding: 18px 28px;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            margin-right: 24px;
+        }
+
+        main {
+            max-width: 1400px;
+            margin: auto;
+            padding: 28px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .panel {
+            background: white;
+            padding: 22px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        .label {
+            color: #666;
+            font-size: 13px;
+            margin-top: 14px;
+        }
+
+        .value {
+            margin-top: 4px;
+            word-break: break-all;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .empty {
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <a href="/">Dashboard</a>
+    <a href="/projects">Projects</a>
+</header>
+
+<main>
+
+    <h1>{{ project.name }}</h1>
+
+    <div class="grid">
+
+        <div class="panel">
+
+            <h2>Project</h2>
+
+            <div class="label">Description</div>
+            <div class="value">
+                {{ project.description or "-" }}
+            </div>
+
+            <div class="label">Git repository</div>
+            <div class="value">
+                {{ project.repository or "-" }}
+            </div>
+
+        </div>
+
+        <div class="panel">
+
+            <h2>Workspaces</h2>
+
+            {% if workspaces %}
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Branch</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for workspace in workspaces %}
+                    <tr>
+                        <td>{{ workspace.name }}</td>
+                        <td>{{ workspace.branch or "-" }}</td>
+                        <td class="status">
+                            {{ workspace.status }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% else %}
+
+            <div class="empty">
+                No workspaces.
+            </div>
+
+            {% endif %}
+
+        </div>
+
+        <div class="panel full">
+
+            <h2>Tasks</h2>
+
+            {% if tasks %}
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for task in tasks %}
+                    <tr>
+                        <td>{{ task.id }}</td>
+                        <td>{{ task.title }}</td>
+                        <td class="status">
+                            {{ task.status }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% else %}
+
+            <div class="empty">
+                No tasks yet.
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>
