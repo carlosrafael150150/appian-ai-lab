@@ -96,6 +96,24 @@ Cloud GPU resources should be considered ephemeral.
 
 The persistent state of Appian AI Lab must remain outside ephemeral compute resources.
 
+## Execution Architecture
+
+A Task may have multiple Executions over its lifetime, but only one Execution may be active for a Task at a time.
+
+One Agent is operationally responsible for each active Execution.
+
+Parallel work is achieved through independent Tasks or child Tasks rather than multiple Agents concurrently modifying the same Task Workspace.
+
+Execution resources are resolved through the Scheduler.
+
+The Task selects an Agent and Model and may optionally specify a preferred Compute resource.
+
+The Scheduler resolves the requested Model to an available Model Deployment.
+
+A Model Deployment represents a Model served on a particular Compute resource.
+
+The Execution records the Agent, Model, Model Deployment and Compute resource actually used.
+
 ## Persistent Platform
 
 The Ubuntu Appian AI Lab machine hosts the persistent Control Plane.

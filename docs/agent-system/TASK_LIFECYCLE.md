@@ -42,9 +42,21 @@ Complex Tasks may be decomposed into child Tasks.
 
 If an external system already provides an appropriate hierarchy, the existing hierarchy should normally be respected.
 
+## Execution Concurrency
+
+A Task may have only one active Execution at a time.
+
+Parallel work should be represented as separate Tasks or child Tasks with independent Executions.
+
+This preserves clear Agent ownership and prevents concurrent modification of the same Task Workspace.
+
 ## Queue
 
-A Task may exist without an assigned Agent, Model or Compute resource.
+A Task may exist without an assigned Agent or Model.
+
+A Task may also remain queued when no compatible Model Deployment has available Compute capacity.
+
+Compute is assigned when an Execution is scheduled rather than being permanently assigned to the Task.
 
 Such a Task remains queued until the necessary execution resources are available.
 

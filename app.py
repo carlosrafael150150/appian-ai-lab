@@ -9,6 +9,7 @@ from db import get_connection, init_db
 from services.context_builder import build_task_context
 from services.knowledge_tools import search_appian_docs, search_project_knowledge
 from services.workspace_tools import search_workspace, read_workspace_file, workspace_status, workspace_diff, workspace_changeset
+from services.execution_engine import check_task_readiness, create_execution
 
 
 app = FastAPI(title="Appian AI Lab")
@@ -737,3 +738,13 @@ def task_workspace_diff(task_id: int):
 @app.get("/api/tasks/{task_id}/workspace/changeset")
 def task_workspace_changeset(task_id: int):
     return workspace_changeset(task_id)
+
+
+@app.get("/api/tasks/{task_id}/readiness")
+def task_readiness(task_id: int):
+    return check_task_readiness(task_id)
+
+
+@app.post("/api/tasks/{task_id}/executions")
+def start_task_execution(task_id: int):
+    return create_execution(task_id)

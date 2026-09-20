@@ -91,8 +91,8 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE,
             provider TEXT,
-            model_id TEXT,
-            base_url TEXT,
+            model_id TEXT NOT NULL,
+            description TEXT,
             configuration_json TEXT,
             enabled INTEGER NOT NULL DEFAULT 1,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -102,16 +102,37 @@ def init_db():
         CREATE TABLE IF NOT EXISTS compute_profiles (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE,
-            provider TEXT,
+            provider TEXT NOT NULL,
             resource_type TEXT,
             gpu_type TEXT,
             gpu_memory_gb REAL,
-            endpoint TEXT,
-            configuration_json TEXT,
             status TEXT NOT NULL DEFAULT 'offline',
+            max_concurrent_executions INTEGER NOT NULL DEFAULT 1,
+            configuration_json TEXT,
+            secret_ref TEXT,
             enabled INTEGER NOT NULL DEFAULT 1,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TABLE IF NOT EXISTS model_deployments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE,
+            model_id INTEGER NOT NULL,
+            compute_profile_id INTEGER NOT NULL,
+            endpoint TEXT,
+            status TEXT NOT NULL DEFAULT 'offline',
+            max_concurrent_executions INTEGER,
+            configuration_json TEXT,
+            enabled INTEGER NOT NULL DEFAULT 1,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(model_id)
+                REFERENCES models(id)
+                ON DELETE CASCADE,
+            FOREIGN KEY(compute_profile_id)
+                REFERENCES compute_profiles(id)
+                ON DELETE CASCADE
         );
 
         CREATE TABLE IF NOT EXISTS skills (
@@ -203,7 +224,7 @@ def init_db():
             environment_id INTEGER,
             agent_id INTEGER,
             model_id INTEGER,
-            compute_profile_id INTEGER,
+            preferred_compute_profile_id INTEGER,
             task_type TEXT NOT NULL DEFAULT 'standard',
             title TEXT NOT NULL,
             objective TEXT,
@@ -219,7 +240,7 @@ def init_db():
             FOREIGN KEY(environment_id) REFERENCES environments(id) ON DELETE SET NULL,
             FOREIGN KEY(agent_id) REFERENCES agents(id) ON DELETE SET NULL,
             FOREIGN KEY(model_id) REFERENCES models(id) ON DELETE SET NULL,
-            FOREIGN KEY(compute_profile_id) REFERENCES compute_profiles(id) ON DELETE SET NULL
+            FOREIGN KEY(preferred_compute_profile_id) REFERENCES compute_profiles(id) ON DELETE SET NULL
         );
 
         CREATE TABLE IF NOT EXISTS task_external_references (
@@ -277,6 +298,7 @@ def init_db():
             agent_id INTEGER,
             model_id INTEGER,
             compute_profile_id INTEGER,
+            model_deployment_id INTEGER,
             status TEXT NOT NULL DEFAULT 'running',
             started_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
             completed_at TEXT,
@@ -286,7 +308,8 @@ def init_db():
             FOREIGN KEY(conversation_id) REFERENCES conversations(id) ON DELETE SET NULL,
             FOREIGN KEY(agent_id) REFERENCES agents(id) ON DELETE SET NULL,
             FOREIGN KEY(model_id) REFERENCES models(id) ON DELETE SET NULL,
-            FOREIGN KEY(compute_profile_id) REFERENCES compute_profiles(id) ON DELETE SET NULL
+            FOREIGN KEY(compute_profile_id) REFERENCES compute_profiles(id) ON DELETE SET NULL,
+            FOREIGN KEY(model_deployment_id) REFERENCES model_deployments(id) ON DELETE SET NULL
         );
 
         CREATE TABLE IF NOT EXISTS execution_events (
@@ -414,6 +437,28 @@ def init_db():
             FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE
         );
 
+        ------------------------------------------------------------
+        -- SCHEDULER
+        ------------------------------------------------------------
+
+        CREATE TABLE IF NOT EXISTS scheduler_settings (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            max_parallel_executions INTEGER NOT NULL DEFAULT 1,
+            scheduling_policy TEXT NOT NULL DEFAULT 'first_available',
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+
+        INSERT OR IGNORE INTO scheduler_settings (
+            id,
+            max_parallel_executions,
+            scheduling_policy
+        )
+        VALUES (
+            1,
+            1,
+            'first_available'
+        );
+
         CREATE TABLE IF NOT EXISTS automations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             project_id INTEGER,
@@ -482,6 +527,15 @@ def init_db():
             FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE,
             FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
         );
+
+        CREATE INDEX IF NOT EXISTS idx_model_deployments_model
+            ON model_deployments(model_id);
+
+        CREATE INDEX IF NOT EXISTS idx_model_deployments_compute
+            ON model_deployments(compute_profile_id);
+
+        CREATE INDEX IF NOT EXISTS idx_model_deployments_status
+            ON model_deployments(status);
 
         CREATE INDEX IF NOT EXISTS idx_tasks_project
             ON tasks(project_id);

@@ -83,6 +83,12 @@ Tasks may also have dependencies independent from their hierarchy.
 
 Tasks may contain references to external systems such as Jira.
 
+A Task may select an Agent and Model and may optionally specify a preferred Compute resource.
+
+The preferred Compute is a scheduling preference rather than an execution assignment.
+
+A Task may have multiple Executions over time, but only one Execution may be active at once.
+
 ## Conversation
 
 A persistent discussion associated with a Task.
@@ -161,6 +167,18 @@ An Agent is not an LLM.
 An LLM used by an Agent.
 
 Models are interchangeable.
+
+## Model Deployment
+
+Represents a Model being served on a particular Compute resource.
+
+A Model Deployment contains the runtime information required to access that Model, such as its endpoint, status and concurrency configuration.
+
+A single Model may have multiple Model Deployments on different Compute resources.
+
+Tasks request Models.
+
+Executions use concrete Model Deployments.
 
 ## Compute
 

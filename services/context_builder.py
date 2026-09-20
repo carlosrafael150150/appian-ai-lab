@@ -14,6 +14,7 @@ SYSTEM_DOCUMENTS = [
     "KNOWLEDGE_MODEL.md",
     "TASK_LIFECYCLE.md",
     "CONTEXT_MODEL.md",
+    "EXECUTION_MODEL.md",
 ]
 
 
@@ -51,7 +52,7 @@ def build_task_context(task_id: int):
             environments.name AS environment_name,
             agents.name AS agent_name,
             models.name AS model_name,
-            compute_profiles.name AS compute_name
+            compute_profiles.name AS preferred_compute_name
         FROM tasks
         JOIN projects
             ON projects.id = tasks.project_id
@@ -64,7 +65,7 @@ def build_task_context(task_id: int):
         LEFT JOIN models
             ON models.id = tasks.model_id
         LEFT JOIN compute_profiles
-            ON compute_profiles.id = tasks.compute_profile_id
+            ON compute_profiles.id = tasks.preferred_compute_profile_id
         WHERE tasks.id = ?
         """,
         (task_id,),
@@ -250,6 +251,9 @@ def build_task_context(task_id: int):
         "assignment": {
             "agent": task["agent_name"],
             "model": task["model_name"],
-            "compute": task["compute_name"],
+            "preferred_compute": task[
+                "preferred_compute_name"
+            ],
+            "compute_assignment": "scheduler",
         },
     }
