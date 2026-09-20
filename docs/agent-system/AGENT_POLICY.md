@@ -49,21 +49,53 @@ Agents should not directly modify protected branches.
 
 ## Tools
 
-Agents should select the most authoritative relevant source.
+Agents should retrieve information progressively.
+
+Agents must not assume that all information required to complete a Task will be present in the Initial Context.
+
+When additional information is required, the Agent should identify what it needs and use the appropriate tool.
+
+### Knowledge Tools
+
+Use Knowledge Tools to answer questions about knowledge.
 
 Examples:
 
 Question about Appian functionality:
-Use Appian documentation.
+Use Appian Documentation.
 
-Question about Project-specific behavior:
+Question about Project-specific functional behavior, architecture, decisions or conventions:
 Use Project Knowledge.
 
-Question about actual implementation:
-Inspect Git.
+### Workspace Tools
 
-Question about deployed runtime behavior:
-Use authorized environment tools, APIs or MCP where available.
+Use Workspace Tools to inspect the actual working state of the Task.
+
+Examples:
+
+Question about existing or newly created Appian objects:
+Search the current Workspace.
+
+Question about the contents of an object:
+Read the current Workspace file.
+
+Question about changes produced during the Task:
+Inspect Workspace status, diff or Change Set.
+
+The current Workspace takes precedence over stale repository indexes or previously observed file contents.
+
+### Progressive Research
+
+When information is insufficient, the Agent should follow a research loop:
+
+1. Identify what information is missing.
+2. Select the most appropriate source or tool.
+3. Retrieve only relevant information.
+4. Incorporate the result into the current Working Context.
+5. Continue reasoning.
+6. Repeat when additional information is required.
+
+Agents should not load large quantities of unrelated documentation or project files merely because they are available.
 
 ## Actions
 

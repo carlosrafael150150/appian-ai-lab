@@ -14,6 +14,36 @@ A Git repository associated with a Project.
 
 Git contains the authoritative history of project files.
 
+### Workspace Operational State
+
+During an active Task, the Workspace is the authoritative operational representation of the files being worked on.
+
+It may contain:
+
+- unchanged existing files
+- modified existing files
+- newly created files
+- deleted files
+- renamed files
+- untracked files
+
+Derived indexes or repository catalogs must not be assumed to represent the current Task state unless they are explicitly synchronized with the Workspace.
+
+### Change Set
+
+A Workspace Change Set represents the file changes associated with the current working state.
+
+It distinguishes changes such as:
+
+- modified
+- added
+- deleted
+- renamed
+- copied
+- untracked
+
+For Appian projects, the Change Set may later be used as an input for building deployment packages containing the objects created or modified by a Task.
+
 ## Workspace
 
 An isolated working copy used by an agent or task.
@@ -70,6 +100,16 @@ Messages may originate from users, agents, system components or tools.
 A concrete attempt to perform work for a Task.
 
 A single user message may result in multiple tool calls and actions within one Execution.
+
+### Execution Context
+
+An Execution uses two forms of context.
+
+Initial Context contains the minimum information required to begin the Execution.
+
+Working Context contains information discovered dynamically while the Agent investigates and performs the Task.
+
+Working Context may evolve throughout the Execution and must not be confused with permanent Project Knowledge.
 
 ## Execution Event
 

@@ -115,6 +115,70 @@ Persistent data includes:
 
 External GPU infrastructure is used only when required.
 
+## Context Architecture
+
+Agent context is progressive rather than static.
+
+The platform must not attempt to load all potentially relevant project knowledge, documentation, repository content or conversation history into the model at the beginning of a Task.
+
+Each Execution starts with an Initial Context containing the minimum information required to begin reasoning, such as:
+
+- system instructions
+- agent policy
+- Task objective
+- relevant conversation state
+- Project Snapshot
+- relevant confirmed Project Knowledge
+- assigned Workspace
+- assigned Environment
+- available Skills, Playbooks and tools
+
+During execution, the Agent discovers additional context through tools.
+
+This dynamically discovered information forms the Working Context of the Execution.
+
+Examples include:
+
+- project files
+- Appian objects
+- Appian documentation
+- Project Knowledge
+- Git changes
+- tool results
+- test results
+- errors
+
+The Agent should retrieve additional information when required rather than receiving all available information in advance.
+
+## Agent Tool Architecture
+
+Tools are divided by responsibility.
+
+### Knowledge Tools
+
+Knowledge Tools answer questions about what the Agent needs to know.
+
+Initial sources include:
+
+- Appian Documentation
+- Project Knowledge
+
+Future sources may include MCP servers and other knowledge providers.
+
+### Workspace Tools
+
+Workspace Tools answer questions about the current working state of a Task.
+
+They operate against the Task's assigned Workspace and include capabilities such as:
+
+- search workspace
+- read workspace files
+- inspect Git status
+- inspect Git diff
+- inspect the Task change set
+
+The Agent must prefer the current Workspace over stale derived representations when determining the current state of files.
+
 ## Git
 
 Git is the source of truth for project files and code history.

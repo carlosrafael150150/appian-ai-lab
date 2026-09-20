@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>New Task - Appian AI Lab</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f6f8;
+            color: #202124;
+        }
+
+        header {
+            background: #1f2937;
+            padding: 18px 28px;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            margin-right: 24px;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: auto;
+            padding: 28px;
+        }
+
+        .panel {
+            background: white;
+            padding: 24px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.08);
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            margin-top: 6px;
+        }
+
+        textarea {
+            min-height: 160px;
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 24px;
+            padding: 11px 20px;
+            cursor: pointer;
+        }
+
+        .hint {
+            color: #666;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <a href="/">Dashboard</a>
+    <a href="/projects">Projects</a>
+    <a href="/projects/{{ project.id }}">
+        {{ project.name }}
+    </a>
+</header>
+
+<main>
+
+    <h1>New Task</h1>
+
+    <div class="panel">
+
+        <form method="post"
+              action="/projects/{{ project.id }}/tasks">
+
+            <label>Task type</label>
+
+            <select name="task_type">
+
+                <option value="standard">
+                    Standard
+                </option>
+
+                <option value="knowledge_discovery">
+                    Knowledge Discovery
+                </option>
+
+                <option value="implementation">
+                    Implementation
+                </option>
+
+                <option value="review">
+                    Review
+                </option>
+
+                <option value="testing">
+                    Testing
+                </option>
+
+            </select>
+
+            <label>Title</label>
+
+            <input
+                name="title"
+                required
+                placeholder="Implementar búsqueda avanzada"
+            >
+
+            <label>Objective</label>
+
+            <textarea
+                name="objective"
+                placeholder="Describe el resultado que quieres conseguir."
+            ></textarea>
+
+            <label>Workspace</label>
+
+            <select name="workspace_id">
+
+                <option value="">
+                    None
+                </option>
+
+                {% for workspace in workspaces %}
+
+                <option value="{{ workspace.id }}">
+                    {{ workspace.name }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+            <label>Parent task</label>
+
+            <select name="parent_task_id">
+
+                <option value="">
+                    None - top level task
+                </option>
+
+                {% for parent in parent_tasks %}
+
+                <option value="{{ parent.id }}">
+                    #{{ parent.id }} - {{ parent.title }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+            <p class="hint">
+                Una tarea puede ser independiente o formar parte
+                de otra tarea.
+            </p>
+
+            <label>External system</label>
+
+            <input
+                name="external_system"
+                placeholder="Jira"
+            >
+
+            <label>External ID</label>
+
+            <input
+                name="external_id"
+                placeholder="APP-1234"
+            >
+
+            <label>External URL</label>
+
+            <input
+                name="external_url"
+                placeholder="https://..."
+            >
+
+            <button type="submit">
+                Create Task
+            </button>
+
+        </form>
+
+    </div>
+
+</main>
+
+</body>
+</html>

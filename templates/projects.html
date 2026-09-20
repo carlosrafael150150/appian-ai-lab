@@ -14,7 +14,6 @@
 
         header {
             background: #1f2937;
-            color: white;
             padding: 18px 28px;
         }
 
@@ -61,15 +60,16 @@
             border-bottom: 1px solid #eee;
         }
 
-        a.project-link {
-            color: #2563eb;
-            text-decoration: none;
+        .project-link {
             font-weight: bold;
+            text-decoration: none;
+            color: #2563eb;
         }
 
         .error {
-            background: #fee;
+            background: #fee2e2;
             padding: 12px;
+            border-radius: 6px;
             margin-bottom: 20px;
         }
     </style>
@@ -84,78 +84,98 @@
 
 <main>
 
-    <h1>Projects</h1>
+<h1>Projects</h1>
 
-    {% if request.query_params.get("error") == "invalid_path" %}
-    <div class="error">
-        The local repository path does not exist.
-    </div>
+{% if request.query_params.get("error") == "invalid_path" %}
+<div class="error">
+    The local repository path does not exist.
+</div>
+{% endif %}
+
+{% if request.query_params.get("error") == "not_git" %}
+<div class="error">
+    The selected directory is not a Git repository.
+</div>
+{% endif %}
+
+<div class="panel">
+
+    <h2>Add existing project</h2>
+
+    <form method="post" action="/projects">
+
+        <label>Project name</label>
+        <input name="name" required>
+
+        <label>Description / functional baseline</label>
+        <textarea
+            name="description"
+            rows="6"
+            placeholder="Describe what you currently know about the project. This can be incomplete."
+        ></textarea>
+
+        <label>Local Git repository</label>
+        <input
+            name="local_path"
+            value="/home/appian/appian-ai/repos/"
+            required
+        >
+
+        <button type="submit">
+            Add Project
+        </button>
+
+    </form>
+
+</div>
+
+<div class="panel">
+
+    <h2>Registered projects</h2>
+
+    {% if projects %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>Project</th>
+                <th>Repositories</th>
+                <th>Tasks</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for project in projects %}
+
+            <tr>
+                <td>
+                    <a
+                        class="project-link"
+                        href="/projects/{{ project.id }}"
+                    >
+                        {{ project.name }}
+                    </a>
+                </td>
+
+                <td>{{ project.repository_count }}</td>
+                <td>{{ project.task_count }}</td>
+                <td>{{ project.status }}</td>
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+    </table>
+
+    {% else %}
+
+    <p>No projects registered.</p>
+
     {% endif %}
 
-    <div class="panel">
-        <h2>Add existing project</h2>
-
-        <form method="post" action="/projects">
-
-            <label>Name</label>
-            <input name="name" required>
-
-            <label>Description</label>
-            <textarea name="description"></textarea>
-
-            <label>Git repository</label>
-            <input
-                name="repository"
-                placeholder="git@github.com:user/repository.git"
-            >
-
-            <label>Local repository path</label>
-            <input
-                name="local_path"
-                placeholder="/home/appian/appian-ai/repos/PQRDSF"
-            >
-
-            <button type="submit">Add Project</button>
-
-        </form>
-    </div>
-
-    <div class="panel">
-        <h2>Registered projects</h2>
-
-        {% if projects %}
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Repository</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {% for project in projects %}
-                <tr>
-                    <td>
-                        <a class="project-link"
-                           href="/projects/{{ project.id }}">
-                            {{ project.name }}
-                        </a>
-                    </td>
-                    <td>{{ project.description or "-" }}</td>
-                    <td>{{ project.repository or "-" }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        {% else %}
-
-        <p>No projects registered.</p>
-
-        {% endif %}
-    </div>
+</div>
 
 </main>
 

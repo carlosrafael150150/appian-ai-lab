@@ -2,6 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>{{ project.name }} - Appian AI Lab</title>
 
     <style>
@@ -32,7 +34,7 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
             gap: 20px;
         }
 
@@ -54,8 +56,8 @@
         }
 
         .value {
-            margin-top: 4px;
-            word-break: break-all;
+            margin-top: 5px;
+            word-break: break-word;
         }
 
         table {
@@ -63,7 +65,8 @@
             border-collapse: collapse;
         }
 
-        th, td {
+        th,
+        td {
             text-align: left;
             padding: 12px;
             border-bottom: 1px solid #eee;
@@ -75,6 +78,39 @@
 
         .empty {
             color: #777;
+        }
+
+        .action {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            background: #2563eb;
+            color: white;
+            margin-top: 12px;
+        }
+
+        .secondary {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .knowledge-status {
+            padding: 10px;
+            background: #f3f4f6;
+            border-radius: 6px;
+            margin: 14px 0;
+        }
+
+        .task-link {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .task-type {
+            color: #666;
+            font-size: 13px;
         }
     </style>
 </head>
@@ -97,14 +133,176 @@
             <h2>Project</h2>
 
             <div class="label">Description</div>
+
             <div class="value">
-                {{ project.description or "-" }}
+                {{ project.description or "No functional baseline defined yet." }}
             </div>
 
-            <div class="label">Git repository</div>
-            <div class="value">
-                {{ project.repository or "-" }}
+            <div class="label">Status</div>
+
+            <div class="value status">
+                {{ project.status }}
             </div>
+
+        </div>
+
+        <div class="panel">
+
+            <h2>Project Knowledge</h2>
+
+            {% if snapshot %}
+
+            <div class="knowledge-status">
+                Current snapshot version: {{ snapshot.version }}
+            </div>
+
+            <div class="label">Knowledge items</div>
+
+            <div class="value">
+                {{ knowledge_count }}
+            </div>
+
+            <a class="action secondary" href="#">
+                View Knowledge
+            </a>
+
+            {% else %}
+
+            <div class="knowledge-status">
+                Knowledge has not been initialized yet.
+            </div>
+
+            <div class="value">
+                The repository can be analyzed to discover
+                functional and technical knowledge.
+            </div>
+
+            <a class="action" href="#">
+                Analyze Project
+            </a>
+
+            {% endif %}
+
+        </div>
+
+        <div class="panel full">
+
+            <h2>Tasks</h2>
+
+            <a
+                class="action"
+                href="/projects/{{ project.id }}/tasks/new"
+            >
+                New Task
+            </a>
+
+            {% if tasks %}
+
+            <table style="margin-top: 20px;">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Task</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Agent</th>
+                        <th>Model</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for task in tasks %}
+
+                    <tr>
+
+                        <td>
+                            {{ task.id }}
+                        </td>
+
+                        <td>
+                            <a
+                                class="task-link"
+                                href="/tasks/{{ task.id }}"
+                            >
+                                {{ task.title }}
+                            </a>
+                        </td>
+
+                        <td class="task-type">
+                            {{ task.task_type }}
+                        </td>
+
+                        <td class="status">
+                            {{ task.status }}
+                        </td>
+
+                        <td>
+                            {{ task.agent_name or "-" }}
+                        </td>
+
+                        <td>
+                            {{ task.model_name or "-" }}
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+            <div class="empty" style="margin-top: 24px;">
+                No tasks yet.
+            </div>
+
+            {% endif %}
+
+        </div>
+
+        <div class="panel">
+
+            <h2>Repositories</h2>
+
+            {% if repositories %}
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Provider</th>
+                        <th>Branch</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for repository in repositories %}
+
+                    <tr>
+                        <td>{{ repository.name }}</td>
+                        <td>{{ repository.provider }}</td>
+                        <td>{{ repository.default_branch }}</td>
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+            <div class="empty">
+                No repositories configured.
+            </div>
+
+            {% endif %}
 
         </div>
 
@@ -115,69 +313,39 @@
             {% if workspaces %}
 
             <table>
+
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Repository</th>
                         <th>Branch</th>
                         <th>Status</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    {% for workspace in workspaces %}
+
+                {% for workspace in workspaces %}
+
                     <tr>
                         <td>{{ workspace.name }}</td>
+                        <td>{{ workspace.repository_name or "-" }}</td>
                         <td>{{ workspace.branch or "-" }}</td>
                         <td class="status">
                             {{ workspace.status }}
                         </td>
                     </tr>
-                    {% endfor %}
+
+                {% endfor %}
+
                 </tbody>
+
             </table>
 
             {% else %}
 
             <div class="empty">
-                No workspaces.
-            </div>
-
-            {% endif %}
-
-        </div>
-
-        <div class="panel full">
-
-            <h2>Tasks</h2>
-
-            {% if tasks %}
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {% for task in tasks %}
-                    <tr>
-                        <td>{{ task.id }}</td>
-                        <td>{{ task.title }}</td>
-                        <td class="status">
-                            {{ task.status }}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-            {% else %}
-
-            <div class="empty">
-                No tasks yet.
+                No workspaces configured.
             </div>
 
             {% endif %}
