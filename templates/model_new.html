@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}
+New Model - Appian AI Lab
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <div class="breadcrumb">
+            <a href="/models">Models</a>
+            <span>/</span>
+            <span>New Model</span>
+        </div>
+
+        <h1 class="page-title">
+            New Model
+        </h1>
+
+        <p class="page-description">
+            Register a logical language model. The endpoint,
+            GPU and runtime configuration will be defined
+            later by a Model Deployment.
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="card form-card">
+
+    <div class="card-header">
+        <h2 class="card-title">
+            Model configuration
+        </h2>
+    </div>
+
+    <div class="card-body">
+
+        <form method="post" action="/models">
+
+            <div class="form-grid">
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        Name
+                    </label>
+
+                    <input
+                        class="input"
+                        name="name"
+                        required
+                        placeholder="Qwen3-Coder"
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        Provider
+                    </label>
+
+                    <input
+                        class="input"
+                        name="provider"
+                        placeholder="Qwen"
+                    >
+
+                </div>
+
+
+                <div class="form-field full">
+
+                    <label class="form-label">
+                        Model ID
+                    </label>
+
+                    <input
+                        class="input mono"
+                        name="model_id"
+                        required
+                        placeholder="Qwen/..."
+                    >
+
+                    <div class="form-hint">
+                        Use the canonical model identifier expected
+                        by the serving runtime.
+                    </div>
+
+                </div>
+
+
+                <div class="form-field full">
+
+                    <label class="form-label">
+                        Description
+                    </label>
+
+                    <textarea
+                        class="textarea"
+                        name="description"
+                        rows="4"
+                        placeholder="Coding model used for Appian analysis and implementation."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-field full">
+
+                    <label class="form-label">
+                        Configuration JSON
+                    </label>
+
+                    <textarea
+                        class="textarea mono"
+                        name="configuration_json"
+                        rows="7"
+                        placeholder='{}'
+                    ></textarea>
+
+                    <div class="form-hint">
+                        Optional model-level configuration.
+                        Do not place endpoints or credentials here.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a
+                    class="btn btn-secondary"
+                    href="/models"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    class="btn btn-primary"
+                    type="submit"
+                >
+                    Create model
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

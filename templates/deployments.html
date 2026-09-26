@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}
+Deployments - Appian AI Lab
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 class="page-title">
+            Model Deployments
+        </h1>
+
+        <p class="page-description">
+            Connect logical models to the compute resources
+            where they are served.
+        </p>
+    </div>
+
+    <div class="page-actions">
+        <a
+            class="btn btn-primary"
+            href="/deployments/new"
+        >
+            + New deployment
+        </a>
+    </div>
+
+</div>
+
+
+{% if deployments %}
+
+<div class="resource-grid">
+
+    {% for deployment in deployments %}
+
+    <div class="card resource-card">
+
+        <div class="resource-card-header">
+
+            <div class="resource-icon">
+                ↗
+            </div>
+
+            <div class="resource-heading">
+
+                <div class="row space-between">
+
+                    <h2 class="resource-title">
+                        {{ deployment.name }}
+                    </h2>
+
+                    {% if deployment.status == "online" %}
+
+                    <span class="badge badge-success">
+                        <span class="status-dot online"></span>
+                        Online
+                    </span>
+
+                    {% elif deployment.status == "starting" %}
+
+                    <span class="badge badge-warning">
+                        <span class="status-dot warning"></span>
+                        Starting
+                    </span>
+
+                    {% elif deployment.status == "error" %}
+
+                    <span class="badge badge-danger">
+                        Error
+                    </span>
+
+                    {% else %}
+
+                    <span class="badge badge-neutral">
+                        <span class="status-dot offline"></span>
+                        Offline
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+                <p class="resource-description">
+                    {{ deployment.model_name }}
+                    on
+                    {{ deployment.compute_name }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="resource-meta">
+
+            <div>
+                <span class="resource-meta-label">
+                    Model
+                </span>
+
+                <span class="resource-meta-value">
+                    {{ deployment.model_name }}
+                </span>
+            </div>
+
+            <div>
+                <span class="resource-meta-label">
+                    Compute
+                </span>
+
+                <span class="resource-meta-value">
+                    {{ deployment.compute_name }}
+                </span>
+            </div>
+
+            <div>
+                <span class="resource-meta-label">
+                    Endpoint
+                </span>
+
+                <span class="resource-meta-value mono">
+                    {{ deployment.endpoint or "Not configured" }}
+                </span>
+            </div>
+
+            <div>
+                <span class="resource-meta-label">
+                    Capacity
+                </span>
+
+                <span class="resource-meta-value">
+                    {{ deployment.active_executions }}
+                    /
+                    {% if deployment.max_concurrent_executions %}
+                        {{ deployment.max_concurrent_executions }}
+                    {% else %}
+                        Compute limit
+                    {% endif %}
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="card">
+
+    <div class="empty-state">
+
+        <div class="empty-state-icon">
+            ↗
+        </div>
+
+        <p class="empty-state-title">
+            No model deployments configured
+        </p>
+
+        <p class="empty-state-description">
+            Create a deployment to make a model available
+            on a compute resource.
+        </p>
+
+        <a
+            class="btn btn-primary"
+            href="/deployments/new"
+            style="margin-top: 18px;"
+        >
+            + New deployment
+        </a>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

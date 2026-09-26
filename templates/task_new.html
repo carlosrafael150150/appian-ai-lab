@@ -1,206 +1,339 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>New Task - Appian AI Lab</title>
+{% extends "base.html" %}
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f6f8;
-            color: #202124;
-        }
+{% block title %}
+New Task - Appian AI Lab
+{% endblock %}
 
-        header {
-            background: #1f2937;
-            padding: 18px 28px;
-        }
+{% block content %}
 
-        header a {
-            color: white;
-            text-decoration: none;
-            margin-right: 24px;
-        }
+<div class="page-header">
 
-        main {
-            max-width: 1000px;
-            margin: auto;
-            padding: 28px;
-        }
+    <div>
+        <div class="breadcrumb">
+            <a href="/projects">Projects</a>
+            <span>/</span>
 
-        .panel {
-            background: white;
-            padding: 24px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.08);
-        }
+            <a href="/projects/{{ project.id }}">
+                {{ project.name }}
+            </a>
 
-        label {
-            display: block;
-            margin-top: 18px;
-            font-weight: bold;
-        }
+            <span>/</span>
+            <span>New Task</span>
+        </div>
 
-        input,
-        textarea,
-        select {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 10px;
-            margin-top: 6px;
-        }
+        <h1 class="page-title">
+            New Task
+        </h1>
 
-        textarea {
-            min-height: 160px;
-            resize: vertical;
-        }
+        <p class="page-description">
+            Define a persistent work objective. Follow-up
+            instructions and corrections will remain within
+            the same task conversation.
+        </p>
+    </div>
 
-        button {
-            margin-top: 24px;
-            padding: 11px 20px;
-            cursor: pointer;
-        }
+</div>
 
-        .hint {
-            color: #666;
-            font-size: 13px;
-            margin-top: 5px;
-        }
-    </style>
-</head>
 
-<body>
+<div class="card form-card">
 
-<header>
-    <a href="/">Dashboard</a>
-    <a href="/projects">Projects</a>
-    <a href="/projects/{{ project.id }}">
-        {{ project.name }}
-    </a>
-</header>
+    <div class="card-header">
+        <h2 class="card-title">
+            Task definition
+        </h2>
+    </div>
 
-<main>
+    <div class="card-body">
 
-    <h1>New Task</h1>
+        <form
+            method="post"
+            action="/projects/{{ project.id }}/tasks"
+        >
 
-    <div class="panel">
+            <div class="form-grid">
 
-        <form method="post"
-              action="/projects/{{ project.id }}/tasks">
+                <div class="form-field">
 
-            <label>Task type</label>
+                    <label class="form-label">
+                        Task type
+                    </label>
 
-            <select name="task_type">
+                    <select
+                        class="select"
+                        name="task_type"
+                    >
+                        <option value="standard">
+                            Standard
+                        </option>
 
-                <option value="standard">
-                    Standard
-                </option>
+                        <option value="knowledge_discovery">
+                            Knowledge Discovery
+                        </option>
 
-                <option value="knowledge_discovery">
-                    Knowledge Discovery
-                </option>
+                        <option value="implementation">
+                            Implementation
+                        </option>
 
-                <option value="implementation">
-                    Implementation
-                </option>
+                        <option value="review">
+                            Review
+                        </option>
 
-                <option value="review">
-                    Review
-                </option>
+                        <option value="testing">
+                            Testing
+                        </option>
+                    </select>
 
-                <option value="testing">
-                    Testing
-                </option>
+                </div>
 
-            </select>
 
-            <label>Title</label>
+                <div class="form-field">
 
-            <input
-                name="title"
-                required
-                placeholder="Implementar búsqueda avanzada"
-            >
+                    <label class="form-label">
+                        Parent task
+                    </label>
 
-            <label>Objective</label>
+                    <select
+                        class="select"
+                        name="parent_task_id"
+                    >
+                        <option value="">
+                            None — top level task
+                        </option>
 
-            <textarea
-                name="objective"
-                placeholder="Describe el resultado que quieres conseguir."
-            ></textarea>
+                        {% for parent in parent_tasks %}
 
-            <label>Workspace</label>
+                        <option value="{{ parent.id }}">
+                            #{{ parent.id }} — {{ parent.title }}
+                        </option>
 
-            <select name="workspace_id">
+                        {% endfor %}
+                    </select>
 
-                <option value="">
-                    None
-                </option>
+                </div>
 
-                {% for workspace in workspaces %}
 
-                <option value="{{ workspace.id }}">
-                    {{ workspace.name }}
-                </option>
+                <div class="form-field full">
 
-                {% endfor %}
+                    <label class="form-label">
+                        Title
+                    </label>
 
-            </select>
+                    <input
+                        class="input"
+                        name="title"
+                        required
+                        placeholder="Analyze functional architecture"
+                    >
 
-            <label>Parent task</label>
+                </div>
 
-            <select name="parent_task_id">
 
-                <option value="">
-                    None - top level task
-                </option>
+                <div class="form-field full">
 
-                {% for parent in parent_tasks %}
+                    <label class="form-label">
+                        Objective
+                    </label>
 
-                <option value="{{ parent.id }}">
-                    #{{ parent.id }} - {{ parent.title }}
-                </option>
+                    <textarea
+                        class="textarea"
+                        name="objective"
+                        rows="7"
+                        placeholder="Describe the outcome this task should achieve..."
+                    ></textarea>
 
-                {% endfor %}
+                    <div class="form-hint">
+                        This defines the objective, not the entire
+                        conversation with the agent.
+                    </div>
 
-            </select>
+                </div>
 
-            <p class="hint">
-                Una tarea puede ser independiente o formar parte
-                de otra tarea.
-            </p>
 
-            <label>External system</label>
+                <div class="form-field">
 
-            <input
-                name="external_system"
-                placeholder="Jira"
-            >
+                    <label class="form-label">
+                        Workspace
+                    </label>
 
-            <label>External ID</label>
+                    <select
+                        class="select"
+                        name="workspace_id"
+                    >
+                        <option value="">
+                            Not assigned
+                        </option>
 
-            <input
-                name="external_id"
-                placeholder="APP-1234"
-            >
+                        {% for workspace in workspaces %}
 
-            <label>External URL</label>
+                        <option value="{{ workspace.id }}">
+                            {{ workspace.name }}
+                        </option>
 
-            <input
-                name="external_url"
-                placeholder="https://..."
-            >
+                        {% endfor %}
+                    </select>
 
-            <button type="submit">
-                Create Task
-            </button>
+                </div>
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        Agent
+                    </label>
+
+                    <select
+                        class="select"
+                        name="agent_id"
+                    >
+                        <option value="">
+                            Not assigned
+                        </option>
+
+                        {% for agent in agents %}
+
+                        <option value="{{ agent.id }}">
+                            {{ agent.name }}
+                        </option>
+
+                        {% endfor %}
+                    </select>
+
+                    <div class="form-hint">
+                        The agent responsible for executing this task.
+                    </div>
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        Model
+                    </label>
+
+                    <select
+                        class="select"
+                        name="model_id"
+                    >
+                        <option value="">
+                            Not assigned
+                        </option>
+
+                        {% for model in models %}
+
+                        <option value="{{ model.id }}">
+                            {{ model.name }}
+                        </option>
+
+                        {% endfor %}
+                    </select>
+
+                    <div class="form-hint">
+                        Logical model requested by this task.
+                    </div>
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        Compute preference
+                    </label>
+
+                    <select
+                        class="select"
+                        name="preferred_compute_profile_id"
+                    >
+                        <option value="">
+                            Auto — scheduler decides
+                        </option>
+
+                        {% for compute in compute_profiles %}
+
+                        <option value="{{ compute.id }}">
+                            {{ compute.name }}
+                        </option>
+
+                        {% endfor %}
+                    </select>
+
+                    <div class="form-hint">
+                        Auto is recommended. A specific compute
+                        resource can be requested when necessary.
+                    </div>
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        External system
+                    </label>
+
+                    <input
+                        class="input"
+                        name="external_system"
+                        placeholder="Jira"
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        External ID
+                    </label>
+
+                    <input
+                        class="input"
+                        name="external_id"
+                        placeholder="APP-1234"
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        External URL
+                    </label>
+
+                    <input
+                        class="input"
+                        name="external_url"
+                        placeholder="https://..."
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a
+                    class="btn btn-secondary"
+                    href="/projects/{{ project.id }}"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    class="btn btn-primary"
+                    type="submit"
+                >
+                    Create task
+                </button>
+
+            </div>
 
         </form>
 
     </div>
 
-</main>
+</div>
 
-</body>
-</html>
+{% endblock %}

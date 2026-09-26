@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}
+Compute - Appian AI Lab
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 class="page-title">Compute</h1>
+
+        <p class="page-description">
+            Manage infrastructure resources available for model
+            deployments and task execution.
+        </p>
+    </div>
+
+    <div class="page-actions">
+        <a
+            class="btn btn-primary"
+            href="/compute/new"
+        >
+            + Add compute
+        </a>
+    </div>
+
+</div>
+
+
+{% if compute_profiles %}
+
+<div class="resource-grid">
+
+    {% for compute in compute_profiles %}
+
+    <div class="card resource-card">
+
+        <div class="resource-card-header">
+
+            <div class="resource-icon">
+                ▤
+            </div>
+
+            <div class="resource-heading">
+
+                <div class="row space-between">
+
+                    <h2 class="resource-title">
+                        {{ compute.name }}
+                    </h2>
+
+                    {% if compute.status == "online" %}
+
+                    <span class="badge badge-success">
+                        <span class="status-dot online"></span>
+                        Online
+                    </span>
+
+                    {% elif compute.status == "starting" %}
+
+                    <span class="badge badge-warning">
+                        <span class="status-dot warning"></span>
+                        Starting
+                    </span>
+
+                    {% elif compute.status == "error" %}
+
+                    <span class="badge badge-danger">
+                        Error
+                    </span>
+
+                    {% else %}
+
+                    <span class="badge badge-neutral">
+                        <span class="status-dot offline"></span>
+                        Offline
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+                <p class="resource-description">
+                    {% if compute.provider == "runpod" %}
+                        RunPod
+                    {% elif compute.provider == "local" %}
+                        Local
+                    {% else %}
+                        {{ compute.provider|title }}
+                    {% endif %}
+
+                    {% if compute.resource_type %}
+                        ·
+
+                        {% if compute.resource_type == "gpu" %}
+                            GPU
+                        {% elif compute.resource_type == "cpu" %}
+                            CPU
+                        {% elif compute.resource_type == "api" %}
+                            External API
+                        {% else %}
+                            {{ compute.resource_type|upper }}
+                        {% endif %}
+                    {% endif %}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="resource-meta">
+
+            <div>
+                <span class="resource-meta-label">
+                    GPU
+                </span>
+
+                <span class="resource-meta-value">
+                    {{ compute.gpu_type or "—" }}
+                </span>
+            </div>
+
+            <div>
+                <span class="resource-meta-label">
+                    VRAM
+                </span>
+
+                <span class="resource-meta-value">
+                    {% if compute.gpu_memory_gb %}
+                        {{ compute.gpu_memory_gb }} GB
+                    {% else %}
+                        —
+                    {% endif %}
+                </span>
+            </div>
+
+            <div>
+                <span class="resource-meta-label">
+                    Capacity
+                </span>
+
+                <span class="resource-meta-value">
+                    {{ compute.active_executions }}
+                    /
+                    {{ compute.max_concurrent_executions }}
+                    executions
+                </span>
+            </div>
+
+            <div>
+                <span class="resource-meta-label">
+                    Deployments
+                </span>
+
+                <span class="resource-meta-value">
+                    {{ compute.deployment_count }}
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="card">
+
+    <div class="empty-state">
+
+        <div class="empty-state-icon">
+            ▤
+        </div>
+
+        <p class="empty-state-title">
+            No compute resources configured
+        </p>
+
+        <p class="empty-state-description">
+            Register infrastructure such as a RunPod GPU
+            before creating model deployments.
+        </p>
+
+        <a
+            class="btn btn-primary"
+            href="/compute/new"
+            style="margin-top: 18px;"
+        >
+            + Add compute
+        </a>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

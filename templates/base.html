@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>
+        {% block title %}Appian AI Lab{% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', path='/css/app.css') }}"
+    >
+
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+
+<div class="app-shell">
+
+    <header class="topbar">
+
+        <div class="brand">
+            <div class="brand-mark">AI</div>
+            <span>Appian AI Lab</span>
+        </div>
+
+        <div class="system-state">
+            <span class="status-dot online"></span>
+            <span>Control Plane</span>
+        </div>
+
+    </header>
+
+    <aside class="sidebar">
+
+        <nav>
+
+            <div class="nav-group">
+
+                <div class="nav-title">
+                    Workspace
+                </div>
+
+                <a
+                    class="nav-item {% if active_page == 'dashboard' %}active{% endif %}"
+                    href="/"
+                >
+                    <span class="nav-icon">⌂</span>
+                    Overview
+                </a>
+
+                <a
+                    class="nav-item {% if active_page == 'projects' %}active{% endif %}"
+                    href="/projects"
+                >
+                    <span class="nav-icon">▣</span>
+                    Projects
+                </a>
+
+                <a class="nav-item" href="#">
+                    <span class="nav-icon">✓</span>
+                    Tasks
+                </a>
+
+            </div>
+
+            <div class="nav-group">
+
+                <div class="nav-title">
+                    Intelligence
+                </div>
+
+                <a
+                    class="nav-item {% if active_page == 'agents' %}active{% endif %}"
+                    href="/agents"
+                >
+                    <span class="nav-icon">◇</span>
+                    Agents
+                </a>
+
+                <a
+                    class="nav-item {% if active_page == 'models' %}active{% endif %}"
+                    href="/models"
+                >
+                    <span class="nav-icon">◎</span>
+                    Models
+                </a>
+
+                <a class="nav-item" href="#">
+                    <span class="nav-icon">◫</span>
+                    Knowledge
+                </a>
+
+            </div>
+
+            <div class="nav-group">
+
+                <div class="nav-title">
+                    Infrastructure
+                </div>
+
+                <a
+                    class="nav-item {% if active_page == 'compute' %}active{% endif %}"
+                    href="/compute"
+                >
+                    <span class="nav-icon">▤</span>
+                    Compute
+                </a>
+
+                <a
+                    class="nav-item {% if active_page == 'deployments' %}active{% endif %}"
+                    href="/deployments"
+                >
+                    <span class="nav-icon">↗</span>
+                    Deployments
+                </a>
+
+                <a
+                    class="nav-item {% if active_page == 'scheduler' %}active{% endif %}"
+                    href="/scheduler"
+                >
+                    <span class="nav-icon">◷</span>
+                    Scheduler
+                </a>
+
+            </div>
+
+            <div class="nav-group">
+
+                <div class="nav-title">
+                    Capabilities
+                </div>
+
+                <a class="nav-item" href="#">
+                    <span class="nav-icon">◆</span>
+                    Skills
+                </a>
+
+                <a class="nav-item" href="#">
+                    <span class="nav-icon">▶</span>
+                    Playbooks
+                </a>
+
+                <a class="nav-item" href="#">
+                    <span class="nav-icon">⌁</span>
+                    MCP
+                </a>
+
+            </div>
+
+            <div class="nav-group">
+
+                <div class="nav-title">
+                    System
+                </div>
+
+                <a class="nav-item" href="#">
+                    <span class="nav-icon">↔</span>
+                    Connections
+                </a>
+
+                <a class="nav-item" href="#">
+                    <span class="nav-icon">⌾</span>
+                    Policies
+                </a>
+
+                <a class="nav-item" href="#">
+                    <span class="nav-icon">▥</span>
+                    Usage
+                </a>
+
+            </div>
+
+        </nav>
+
+    </aside>
+
+    <main class="content">
+
+        <div class="content-inner">
+            {% block content %}{% endblock %}
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

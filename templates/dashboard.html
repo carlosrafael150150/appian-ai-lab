@@ -1,168 +1,133 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appian AI Lab</title>
+{% extends "base.html" %}
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f6f8;
-            color: #202124;
-        }
+{% block title %}
+Overview - Appian AI Lab
+{% endblock %}
 
-        header {
-            background: #1f2937;
-            color: white;
-            padding: 18px 28px;
-        }
+{% block content %}
 
-        header h1 {
-            margin: 0;
-            font-size: 22px;
-            display: inline-block;
-        }
+<div class="page-header">
 
-        nav {
-            float: right;
-        }
+    <div>
+        <h1 class="page-title">
+            Overview
+        </h1>
 
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin-left: 20px;
-        }
+        <p class="page-description">
+            Monitor projects, tasks, agents and execution
+            infrastructure from one place.
+        </p>
+    </div>
 
-        main {
-            padding: 28px;
-            max-width: 1400px;
-            margin: auto;
-        }
+</div>
 
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 16px;
-            margin-bottom: 28px;
-        }
 
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.08);
-        }
+<div class="card-grid">
 
-        .card .number {
-            font-size: 30px;
-            font-weight: bold;
-        }
+    <div class="card stat-card">
+        <div class="stat-label">Projects</div>
 
-        .card .label {
-            color: #666;
-            margin-top: 6px;
-        }
-
-        .card-link {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .panel {
-            background: white;
-            padding: 22px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.08);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            text-align: left;
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .empty {
-            color: #777;
-            padding: 20px 0;
-        }
-    </style>
-</head>
-
-<body>
-
-<header>
-    <h1>Appian AI Lab</h1>
-
-    <nav>
-        <a href="/">Dashboard</a>
-        <a href="/projects">Projects</a>
-    </nav>
-</header>
-
-<main>
-
-    <div class="cards">
-
-        <a class="card-link" href="/projects">
-            <div class="card">
-                <div class="number">{{ counts.projects }}</div>
-                <div class="label">Projects</div>
-            </div>
-        </a>
-
-        <div class="card">
-            <div class="number">{{ counts.workspaces }}</div>
-            <div class="label">Workspaces</div>
+        <div class="stat-value">
+            {{ counts.projects }}
         </div>
 
-        <div class="card">
-            <div class="number">{{ counts.agents }}</div>
-            <div class="label">Agents</div>
+        <div class="stat-detail">
+            Registered workspaces
+        </div>
+    </div>
+
+
+    <div class="card stat-card">
+        <div class="stat-label">Tasks</div>
+
+        <div class="stat-value">
+            {{ counts.tasks }}
         </div>
 
-        <div class="card">
-            <div class="number">{{ counts.models }}</div>
-            <div class="label">Models</div>
+        <div class="stat-detail">
+            Across all projects
+        </div>
+    </div>
+
+
+    <div class="card stat-card">
+        <div class="stat-label">Agents</div>
+
+        <div class="stat-value">
+            {{ counts.agents }}
         </div>
 
-        <div class="card">
-            <div class="number">{{ counts.compute_profiles }}</div>
-            <div class="label">Compute</div>
+        <div class="stat-detail">
+            Available workers
+        </div>
+    </div>
+
+
+    <div class="card stat-card">
+        <div class="stat-label">Models</div>
+
+        <div class="stat-value">
+            {{ counts.models }}
         </div>
 
-        <div class="card">
-            <div class="number">{{ counts.knowledge_sources }}</div>
-            <div class="label">Knowledge</div>
+        <div class="stat-detail">
+            Configured models
+        </div>
+    </div>
+
+
+    <div class="card stat-card">
+        <div class="stat-label">Compute</div>
+
+        <div class="stat-value">
+            {{ counts.compute_profiles }}
         </div>
 
-        <div class="card">
-            <div class="number">{{ counts.skills }}</div>
-            <div class="label">Skills</div>
+        <div class="stat-detail">
+            Registered resources
+        </div>
+    </div>
+
+
+    <div class="card stat-card">
+        <div class="stat-label">Knowledge</div>
+
+        <div class="stat-value">
+            {{ counts.knowledge_items }}
         </div>
 
-        <div class="card">
-            <div class="number">{{ counts.mcp_servers }}</div>
-            <div class="label">MCP</div>
+        <div class="stat-detail">
+            Current knowledge items
+        </div>
+    </div>
+
+</div>
+
+
+<div style="height: 24px;"></div>
+
+
+<div class="card">
+
+    <div class="card-header">
+
+        <div>
+            <h2 class="card-title">
+                Recent Tasks
+            </h2>
         </div>
 
     </div>
 
-    <div class="panel">
-        <h2>Recent Tasks</h2>
 
-        {% if tasks %}
+    {% if tasks %}
 
-        <table>
+    <div class="table-wrap">
+
+        <table class="data-table">
+
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Task</th>
                     <th>Project</th>
                     <th>Status</th>
@@ -170,27 +135,58 @@
             </thead>
 
             <tbody>
+
                 {% for task in tasks %}
+
                 <tr>
-                    <td>{{ task.id }}</td>
-                    <td>{{ task.title }}</td>
-                    <td>{{ task.project_name or "-" }}</td>
-                    <td>{{ task.status }}</td>
+
+                    <td>
+                        <strong>
+                            {{ task.title }}
+                        </strong>
+                    </td>
+
+                    <td>
+                        {{ task.project_name }}
+                    </td>
+
+                    <td>
+                        <span class="badge badge-neutral">
+                            {{ task.status }}
+                        </span>
+                    </td>
+
                 </tr>
+
                 {% endfor %}
+
             </tbody>
+
         </table>
 
-        {% else %}
-
-        <div class="empty">
-            No tasks yet.
-        </div>
-
-        {% endif %}
     </div>
 
-</main>
+    {% else %}
 
-</body>
-</html>
+    <div class="empty-state">
+
+        <div class="empty-state-icon">
+            ✓
+        </div>
+
+        <p class="empty-state-title">
+            No tasks yet
+        </p>
+
+        <p class="empty-state-description">
+            Tasks will appear here when work is created
+            inside a project.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

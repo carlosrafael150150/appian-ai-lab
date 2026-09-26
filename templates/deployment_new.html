@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}
+New Deployment - Appian AI Lab
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <div class="breadcrumb">
+            <a href="/deployments">Deployments</a>
+            <span>/</span>
+            <span>New Deployment</span>
+        </div>
+
+        <h1 class="page-title">
+            New Model Deployment
+        </h1>
+
+        <p class="page-description">
+            Define where a model is served and how the
+            Execution Scheduler can access it.
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="card form-card">
+
+    <div class="card-header">
+        <h2 class="card-title">
+            Deployment configuration
+        </h2>
+    </div>
+
+    <div class="card-body">
+
+        <form method="post" action="/deployments">
+
+            <div class="form-grid">
+
+                <div class="form-field full">
+
+                    <label class="form-label">
+                        Name
+                    </label>
+
+                    <input
+                        class="input"
+                        name="name"
+                        required
+                        placeholder="Qwen Coder @ RunPod RTX 5090 A"
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        Model
+                    </label>
+
+                    <select
+                        class="select"
+                        name="model_id"
+                        required
+                    >
+
+                        {% for model in models %}
+
+                        <option value="{{ model.id }}">
+                            {{ model.name }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        Compute
+                    </label>
+
+                    <select
+                        class="select"
+                        name="compute_profile_id"
+                        required
+                    >
+
+                        {% for compute in compute_profiles %}
+
+                        <option value="{{ compute.id }}">
+                            {{ compute.name }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-field full">
+
+                    <label class="form-label">
+                        Endpoint
+                    </label>
+
+                    <input
+                        class="input mono"
+                        name="endpoint"
+                        placeholder="http://..."
+                    >
+
+                    <div class="form-hint">
+                        OpenAI-compatible model serving endpoint.
+                        It may be configured later while the
+                        compute resource is offline.
+                    </div>
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        Maximum concurrent executions
+                    </label>
+
+                    <input
+                        class="input"
+                        name="max_concurrent_executions"
+                        type="number"
+                        min="1"
+                        placeholder="1"
+                    >
+
+                    <div class="form-hint">
+                        Leave empty to inherit the Compute limit.
+                    </div>
+
+                </div>
+
+
+                <div class="form-field full">
+
+                    <label class="form-label">
+                        Configuration JSON
+                    </label>
+
+                    <textarea
+                        class="textarea mono"
+                        name="configuration_json"
+                        rows="6"
+                        placeholder='{}'
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a
+                    class="btn btn-secondary"
+                    href="/deployments"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    class="btn btn-primary"
+                    type="submit"
+                >
+                    Create deployment
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}
+New Agent - Appian AI Lab
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <div class="breadcrumb">
+            <a href="/agents">Agents</a>
+            <span>/</span>
+            <span>New Agent</span>
+        </div>
+
+        <h1 class="page-title">
+            New Agent
+        </h1>
+
+        <p class="page-description">
+            Define the role and agent-specific behavior.
+            Platform policies, knowledge rules and execution
+            rules are provided separately by Appian AI Lab.
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="card form-card">
+
+    <div class="card-header">
+        <h2 class="card-title">
+            Agent configuration
+        </h2>
+    </div>
+
+    <div class="card-body">
+
+        <form method="post" action="/agents">
+
+            <div class="form-grid">
+
+                <div class="form-field full">
+
+                    <label class="form-label">
+                        Name
+                    </label>
+
+                    <input
+                        class="input"
+                        name="name"
+                        required
+                        placeholder="Appian Analyst"
+                    >
+
+                    <div class="form-hint">
+                        Use a role-oriented name rather than
+                        the name of a model.
+                    </div>
+
+                </div>
+
+
+                <div class="form-field full">
+
+                    <label class="form-label">
+                        Description
+                    </label>
+
+                    <textarea
+                        class="textarea"
+                        name="description"
+                        rows="4"
+                        placeholder="Analyzes Appian applications and discovers functional and technical knowledge."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-field full">
+
+                    <label class="form-label">
+                        Agent-specific instructions
+                    </label>
+
+                    <textarea
+                        class="textarea"
+                        name="system_instructions"
+                        rows="10"
+                        placeholder="Optional instructions that differentiate this agent from other agents..."
+                    ></textarea>
+
+                    <div class="form-hint">
+                        Do not duplicate global Agent Policy,
+                        Knowledge Model or Execution Model rules here.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a
+                    class="btn btn-secondary"
+                    href="/agents"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    class="btn btn-primary"
+                    type="submit"
+                >
+                    Create agent
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

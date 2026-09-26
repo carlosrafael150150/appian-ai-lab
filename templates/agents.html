@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}
+Agents - Appian AI Lab
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 class="page-title">
+            Agents
+        </h1>
+
+        <p class="page-description">
+            Configure specialized workers that can be assigned
+            to tasks. Agents define roles and behavior independently
+            from models and compute resources.
+        </p>
+    </div>
+
+    <div class="page-actions">
+        <a
+            class="btn btn-primary"
+            href="/agents/new"
+        >
+            + New agent
+        </a>
+    </div>
+
+</div>
+
+
+{% if agents %}
+
+<div class="resource-grid">
+
+    {% for agent in agents %}
+
+    <div class="card resource-card">
+
+        <div class="resource-card-header">
+
+            <div class="resource-icon">
+                ◇
+            </div>
+
+            <div class="resource-heading">
+
+                <div class="row space-between">
+
+                    <h2 class="resource-title">
+                        {{ agent.name }}
+                    </h2>
+
+                    {% if agent.enabled %}
+
+                    <span class="badge badge-success">
+                        <span class="status-dot online"></span>
+                        Enabled
+                    </span>
+
+                    {% else %}
+
+                    <span class="badge badge-neutral">
+                        <span class="status-dot offline"></span>
+                        Disabled
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+                <p class="resource-description">
+                    {{ agent.description or
+                       "No description provided." }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="resource-meta">
+
+            <div>
+                <span class="resource-meta-label">
+                    Model
+                </span>
+
+                <span class="resource-meta-value">
+                    Selected by task
+                </span>
+            </div>
+
+            <div>
+                <span class="resource-meta-label">
+                    Compute
+                </span>
+
+                <span class="resource-meta-value">
+                    Scheduled dynamically
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="card">
+
+    <div class="empty-state">
+
+        <div class="empty-state-icon">
+            ◇
+        </div>
+
+        <p class="empty-state-title">
+            No agents configured
+        </p>
+
+        <p class="empty-state-description">
+            Create your first specialized agent to make it
+            available for task execution.
+        </p>
+
+        <a
+            class="btn btn-primary"
+            href="/agents/new"
+            style="margin-top: 18px;"
+        >
+            + New agent
+        </a>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}
+Models - Appian AI Lab
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 class="page-title">Models</h1>
+
+        <p class="page-description">
+            Configure the language models available to agents.
+            Runtime endpoints and compute resources are managed
+            separately through deployments.
+        </p>
+    </div>
+
+    <div class="page-actions">
+        <a
+            class="btn btn-primary"
+            href="/models/new"
+        >
+            + New model
+        </a>
+    </div>
+
+</div>
+
+
+{% if models %}
+
+<div class="resource-grid">
+
+    {% for model in models %}
+
+    <div class="card resource-card">
+
+        <div class="resource-card-header">
+
+            <div class="resource-icon">
+                ◎
+            </div>
+
+            <div class="resource-heading">
+
+                <div class="row space-between">
+
+                    <h2 class="resource-title">
+                        {{ model.name }}
+                    </h2>
+
+                    {% if model.enabled %}
+
+                    <span class="badge badge-success">
+                        <span class="status-dot online"></span>
+                        Enabled
+                    </span>
+
+                    {% else %}
+
+                    <span class="badge badge-neutral">
+                        <span class="status-dot offline"></span>
+                        Disabled
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+                <p class="resource-description">
+                    {{ model.description or
+                       "No description provided." }}
+                </p>
+
+            </div>
+
+        </div>
+
+        <div>
+                <span class="resource-meta-label">
+                    Deployments
+                </span>
+
+                <span class="resource-meta-value">
+                    {{ model.deployment_count }}
+                </span>
+            </div>
+
+        <div class="resource-meta">
+
+            <div>
+                <span class="resource-meta-label">
+                    Provider
+                </span>
+
+                <span class="resource-meta-value">
+                    {{ model.provider or "—" }}
+                </span>
+            </div>
+
+            <div>
+                <span class="resource-meta-label">
+                    Model ID
+                </span>
+
+                <span class="resource-meta-value mono">
+                    {{ model.model_id }}
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="card">
+
+    <div class="empty-state">
+
+        <div class="empty-state-icon">
+            ◎
+        </div>
+
+        <p class="empty-state-title">
+            No models configured
+        </p>
+
+        <p class="empty-state-description">
+            Register a logical model before creating
+            deployments on compute resources.
+        </p>
+
+        <a
+            class="btn btn-primary"
+            href="/models/new"
+            style="margin-top: 18px;"
+        >
+            + New model
+        </a>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+
+{% block title %}
+Scheduler - Appian AI Lab
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 class="page-title">
+            Scheduler
+        </h1>
+
+        <p class="page-description">
+            Control execution concurrency and monitor the capacity
+            available for running tasks.
+        </p>
+    </div>
+
+</div>
+
+
+<div class="card-grid">
+
+    <div class="card stat-card">
+        <div class="stat-label">
+            Active executions
+        </div>
+
+        <div class="stat-value">
+            {{ capacity.active_executions }}
+            <span class="stat-limit">
+                / {{ settings.max_parallel_executions }}
+            </span>
+        </div>
+
+        <div class="stat-detail">
+            Global execution capacity
+        </div>
+    </div>
+
+
+    <div class="card stat-card">
+        <div class="stat-label">
+            Online compute
+        </div>
+
+        <div class="stat-value">
+            {{ capacity.online_compute }}
+            <span class="stat-limit">
+                / {{ capacity.total_compute }}
+            </span>
+        </div>
+
+        <div class="stat-detail">
+            Enabled compute resources
+        </div>
+    </div>
+
+
+    <div class="card stat-card">
+        <div class="stat-label">
+            Online deployments
+        </div>
+
+        <div class="stat-value">
+            {{ capacity.online_deployments }}
+            <span class="stat-limit">
+                / {{ capacity.total_deployments }}
+            </span>
+        </div>
+
+        <div class="stat-detail">
+            Enabled model deployments
+        </div>
+    </div>
+
+
+    <div class="card stat-card">
+        <div class="stat-label">
+            Available slots
+        </div>
+
+        <div class="stat-value">
+            {{ capacity.available_slots }}
+        </div>
+
+        <div class="stat-detail">
+            Executions that can start now
+        </div>
+    </div>
+
+</div>
+
+
+<div class="section-gap"></div>
+
+
+<div class="two-column">
+
+    <div class="card">
+
+        <div class="card-header">
+            <h2 class="card-title">
+                Scheduler configuration
+            </h2>
+        </div>
+
+        <div class="card-body">
+
+            <form method="post" action="/scheduler">
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        Maximum parallel executions
+                    </label>
+
+                    <input
+                        class="input"
+                        type="number"
+                        name="max_parallel_executions"
+                        min="1"
+                        required
+                        value="{{ settings.max_parallel_executions }}"
+                    >
+
+                    <div class="form-hint">
+                        Global limit across all tasks and compute
+                        resources.
+                    </div>
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        Scheduling policy
+                    </label>
+
+                    <select
+                        class="select"
+                        name="scheduling_policy"
+                    >
+
+                        <option
+                            value="first_available"
+                            {% if settings.scheduling_policy == "first_available" %}
+                            selected
+                            {% endif %}
+                        >
+                            First available
+                        </option>
+
+                    </select>
+
+                    <div class="form-hint">
+                        More scheduling strategies can be introduced
+                        without changing the Task model.
+                    </div>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        class="btn btn-primary"
+                        type="submit"
+                    >
+                        Save configuration
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+            <h2 class="card-title">
+                Current availability
+            </h2>
+        </div>
+
+        <div class="card-body">
+
+            <div class="detail-list">
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Global scheduler
+                    </div>
+
+                    <div class="detail-value">
+
+                        {% if capacity.global_slots > 0 %}
+
+                        <span class="badge badge-success">
+                            Capacity available
+                        </span>
+
+                        {% else %}
+
+                        <span class="badge badge-warning">
+                            No capacity
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Compute resources
+                    </div>
+
+                    <div class="detail-value">
+                        {{ capacity.online_compute }}
+                        online
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Model deployments
+                    </div>
+
+                    <div class="detail-value">
+                        {{ capacity.online_deployments }}
+                        online
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <div class="detail-label">
+                        Runnable slots
+                    </div>
+
+                    <div class="detail-value">
+                        {{ capacity.available_slots }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="section-gap"></div>
+
+
+<div class="card">
+
+    <div class="card-header">
+        <h2 class="card-title">
+            Compute capacity
+        </h2>
+    </div>
+
+    {% if compute_capacity %}
+
+    <div class="table-wrap">
+
+        <table class="data-table">
+
+            <thead>
+                <tr>
+                    <th>Compute</th>
+                    <th>Status</th>
+                    <th>Active</th>
+                    <th>Limit</th>
+                    <th>Available</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for compute in compute_capacity %}
+
+                <tr>
+
+                    <td>
+                        <strong>
+                            {{ compute.name }}
+                        </strong>
+                    </td>
+
+                    <td>
+
+                        {% if compute.status == "online" %}
+
+                        <span class="badge badge-success">
+                            Online
+                        </span>
+
+                        {% else %}
+
+                        <span class="badge badge-neutral">
+                            Offline
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+                        {{ compute.active_executions }}
+                    </td>
+
+                    <td>
+                        {{ compute.max_concurrent_executions }}
+                    </td>
+
+                    <td>
+                        {{ compute.available_slots }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+        No compute resources configured.
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

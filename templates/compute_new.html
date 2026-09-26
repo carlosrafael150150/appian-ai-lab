@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}
+Add Compute - Appian AI Lab
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <div class="breadcrumb">
+            <a href="/compute">Compute</a>
+            <span>/</span>
+            <span>Add Compute</span>
+        </div>
+
+        <h1 class="page-title">
+            Add Compute
+        </h1>
+
+        <p class="page-description">
+            Register an infrastructure resource capable of
+            hosting model deployments.
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="card form-card">
+
+    <div class="card-header">
+        <h2 class="card-title">
+            Compute configuration
+        </h2>
+    </div>
+
+    <div class="card-body">
+
+        <form method="post" action="/compute">
+
+            <div class="form-grid">
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        Name
+                    </label>
+
+                    <input
+                        class="input"
+                        name="name"
+                        required
+                        placeholder="RunPod RTX 5090 A"
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        Provider
+                    </label>
+
+                    <select
+                        class="select"
+                        name="provider"
+                        required
+                    >
+                        <option value="runpod">
+                            RunPod
+                        </option>
+
+                        <option value="local">
+                            Local
+                        </option>
+
+                        <option value="other">
+                            Other
+                        </option>
+                    </select>
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        Resource type
+                    </label>
+
+                    <select
+                        class="select"
+                        name="resource_type"
+                    >
+                        <option value="gpu">
+                            GPU
+                        </option>
+
+                        <option value="cpu">
+                            CPU
+                        </option>
+
+                        <option value="api">
+                            External API
+                        </option>
+                    </select>
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        GPU type
+                    </label>
+
+                    <input
+                        class="input"
+                        name="gpu_type"
+                        placeholder="NVIDIA GeForce RTX 5090"
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        GPU memory
+                    </label>
+
+                    <input
+                        class="input"
+                        name="gpu_memory_gb"
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        placeholder="32"
+                    >
+
+                    <div class="form-hint">
+                        VRAM in GB.
+                    </div>
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label class="form-label">
+                        Maximum concurrent executions
+                    </label>
+
+                    <input
+                        class="input"
+                        name="max_concurrent_executions"
+                        type="number"
+                        min="1"
+                        value="1"
+                        required
+                    >
+
+                    <div class="form-hint">
+                        Maximum task executions allowed to use
+                        this compute resource simultaneously.
+                    </div>
+
+                </div>
+
+
+                <div class="form-field full">
+
+                    <label class="form-label">
+                        Configuration JSON
+                    </label>
+
+                    <textarea
+                        class="textarea mono"
+                        name="configuration_json"
+                        rows="7"
+                        placeholder='{}'
+                    ></textarea>
+
+                    <div class="form-hint">
+                        Provider-specific configuration.
+                        Credentials should use Secret references
+                        rather than being stored here.
+                    </div>
+
+                </div>
+
+
+                <div class="form-field full">
+
+                    <label class="form-label">
+                        Secret reference
+                    </label>
+
+                    <input
+                        class="input mono"
+                        name="secret_ref"
+                        placeholder="secret://runpod/api-key"
+                    >
+
+                    <div class="form-hint">
+                        Optional reference only. Do not enter the
+                        actual API key.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a
+                    class="btn btn-secondary"
+                    href="/compute"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    class="btn btn-primary"
+                    type="submit"
+                >
+                    Add compute
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

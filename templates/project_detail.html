@@ -1,276 +1,247 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
 
-    <title>{{ project.name }} - Appian AI Lab</title>
+{% block title %}
+{{ project.name }} - Appian AI Lab
+{% endblock %}
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f6f8;
-            color: #202124;
-        }
+{% block content %}
 
-        header {
-            background: #1f2937;
-            color: white;
-            padding: 18px 28px;
-        }
+<div class="page-header">
 
-        header a {
-            color: white;
-            text-decoration: none;
-            margin-right: 24px;
-        }
+    <div>
+        <div class="breadcrumb">
+            <a href="/projects">Projects</a>
+            <span>/</span>
+            <span>{{ project.name }}</span>
+        </div>
 
-        main {
-            max-width: 1400px;
-            margin: auto;
-            padding: 28px;
-        }
+        <h1 class="page-title">
+            {{ project.name }}
+        </h1>
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 20px;
-        }
+        <p class="page-description">
+            {{ project.description or
+               "No functional baseline has been defined yet." }}
+        </p>
+    </div>
 
-        .panel {
-            background: white;
-            padding: 22px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.08);
-        }
+    <div class="page-actions">
+        <a
+            class="btn btn-primary"
+            href="/projects/{{ project.id }}/tasks/new"
+        >
+            + New task
+        </a>
+    </div>
 
-        .full {
-            grid-column: 1 / -1;
-        }
+</div>
 
-        .label {
-            color: #666;
-            font-size: 13px;
-            margin-top: 14px;
-        }
 
-        .value {
-            margin-top: 5px;
-            word-break: break-word;
-        }
+<div class="card-grid">
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+    <div class="card stat-card">
+        <div class="stat-label">Status</div>
 
-        th,
-        td {
-            text-align: left;
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .status {
-            font-weight: bold;
-        }
-
-        .empty {
-            color: #777;
-        }
-
-        .action {
-            display: inline-block;
-            padding: 10px 16px;
-            border-radius: 6px;
-            text-decoration: none;
-            background: #2563eb;
-            color: white;
-            margin-top: 12px;
-        }
-
-        .secondary {
-            background: #e5e7eb;
-            color: #111827;
-        }
-
-        .knowledge-status {
-            padding: 10px;
-            background: #f3f4f6;
-            border-radius: 6px;
-            margin: 14px 0;
-        }
-
-        .task-link {
-            color: #2563eb;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .task-type {
-            color: #666;
-            font-size: 13px;
-        }
-    </style>
-</head>
-
-<body>
-
-<header>
-    <a href="/">Dashboard</a>
-    <a href="/projects">Projects</a>
-</header>
-
-<main>
-
-    <h1>{{ project.name }}</h1>
-
-    <div class="grid">
-
-        <div class="panel">
-
-            <h2>Project</h2>
-
-            <div class="label">Description</div>
-
-            <div class="value">
-                {{ project.description or "No functional baseline defined yet." }}
-            </div>
-
-            <div class="label">Status</div>
-
-            <div class="value status">
+        <div style="margin-top: 10px;">
+            <span class="badge badge-success">
                 {{ project.status }}
-            </div>
+            </span>
+        </div>
+    </div>
 
+    <div class="card stat-card">
+        <div class="stat-label">Repositories</div>
+
+        <div class="stat-value">
+            {{ repositories|length }}
+        </div>
+    </div>
+
+    <div class="card stat-card">
+        <div class="stat-label">Tasks</div>
+
+        <div class="stat-value">
+            {{ tasks|length }}
+        </div>
+    </div>
+
+    <div class="card stat-card">
+        <div class="stat-label">Knowledge items</div>
+
+        <div class="stat-value">
+            {{ knowledge_count }}
+        </div>
+    </div>
+
+</div>
+
+
+<div class="section-gap"></div>
+
+
+<div class="card">
+
+    <div class="card-header">
+        <div>
+            <h2 class="card-title">Project Knowledge</h2>
         </div>
 
-        <div class="panel">
+        {% if snapshot %}
+        <span class="badge badge-success">
+            Snapshot v{{ snapshot.version }}
+        </span>
+        {% else %}
+        <span class="badge badge-warning">
+            Not initialized
+        </span>
+        {% endif %}
+    </div>
 
-            <h2>Project Knowledge</h2>
+    <div class="card-body">
 
-            {% if snapshot %}
+        {% if snapshot %}
 
-            <div class="knowledge-status">
-                Current snapshot version: {{ snapshot.version }}
-            </div>
+        <p class="muted">
+            The project currently has a generated knowledge
+            snapshot and {{ knowledge_count }} knowledge items.
+        </p>
 
-            <div class="label">Knowledge items</div>
+        <a class="btn btn-secondary" href="#">
+            View knowledge
+        </a>
 
-            <div class="value">
-                {{ knowledge_count }}
-            </div>
+        {% else %}
 
-            <a class="action secondary" href="#">
-                View Knowledge
-            </a>
+        <p class="muted">
+            No project knowledge baseline has been generated yet.
+            A Knowledge Discovery Task can analyze the repository
+            and propose functional and technical knowledge.
+        </p>
 
-            {% else %}
+        {% endif %}
 
-            <div class="knowledge-status">
-                Knowledge has not been initialized yet.
-            </div>
+    </div>
 
-            <div class="value">
-                The repository can be analyzed to discover
-                functional and technical knowledge.
-            </div>
+</div>
 
-            <a class="action" href="#">
-                Analyze Project
-            </a>
 
-            {% endif %}
+<div class="section-gap"></div>
 
-        </div>
 
-        <div class="panel full">
+<div class="card">
 
-            <h2>Tasks</h2>
+    <div class="card-header">
+        <h2 class="card-title">Tasks</h2>
 
-            <a
-                class="action"
-                href="/projects/{{ project.id }}/tasks/new"
-            >
-                New Task
-            </a>
+        <a
+            class="btn btn-secondary"
+            href="/projects/{{ project.id }}/tasks/new"
+        >
+            + New task
+        </a>
+    </div>
 
-            {% if tasks %}
+    {% if tasks %}
 
-            <table style="margin-top: 20px;">
+    <div class="table-wrap">
 
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Task</th>
-                        <th>Type</th>
-                        <th>Status</th>
-                        <th>Agent</th>
-                        <th>Model</th>
-                    </tr>
-                </thead>
+        <table class="data-table">
 
-                <tbody>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Task</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Agent</th>
+                    <th>Model</th>
+                </tr>
+            </thead>
+
+            <tbody>
 
                 {% for task in tasks %}
 
-                    <tr>
+                <tr>
 
-                        <td>
-                            {{ task.id }}
-                        </td>
+                    <td class="mono text-small">
+                        #{{ task.id }}
+                    </td>
 
-                        <td>
-                            <a
-                                class="task-link"
-                                href="/tasks/{{ task.id }}"
-                            >
-                                {{ task.title }}
-                            </a>
-                        </td>
+                    <td>
+                        <a
+                            class="entity-link"
+                            href="/tasks/{{ task.id }}"
+                        >
+                            {{ task.title }}
+                        </a>
+                    </td>
 
-                        <td class="task-type">
-                            {{ task.task_type }}
-                        </td>
+                    <td>
+                        {{ task.task_type }}
+                    </td>
 
-                        <td class="status">
+                    <td>
+                        <span class="badge badge-neutral">
                             {{ task.status }}
-                        </td>
+                        </span>
+                    </td>
 
-                        <td>
-                            {{ task.agent_name or "-" }}
-                        </td>
+                    <td>
+                        {{ task.agent_name or "—" }}
+                    </td>
 
-                        <td>
-                            {{ task.model_name or "-" }}
-                        </td>
+                    <td>
+                        {{ task.model_name or "—" }}
+                    </td>
 
-                    </tr>
+                </tr>
 
                 {% endfor %}
 
-                </tbody>
+            </tbody>
 
-            </table>
+        </table>
 
-            {% else %}
+    </div>
 
-            <div class="empty" style="margin-top: 24px;">
-                No tasks yet.
-            </div>
+    {% else %}
 
-            {% endif %}
+    <div class="empty-state">
 
+        <div class="empty-state-icon">✓</div>
+
+        <p class="empty-state-title">
+            No tasks yet
+        </p>
+
+        <p class="empty-state-description">
+            Create a task to start planning work for this project.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<div class="section-gap"></div>
+
+
+<div class="two-column">
+
+    <div class="card">
+
+        <div class="card-header">
+            <h2 class="card-title">Repositories</h2>
         </div>
 
-        <div class="panel">
+        {% if repositories %}
 
-            <h2>Repositories</h2>
+        <div class="table-wrap">
 
-            {% if repositories %}
-
-            <table>
+            <table class="data-table">
 
                 <thead>
                     <tr>
@@ -282,37 +253,54 @@
 
                 <tbody>
 
-                {% for repository in repositories %}
+                    {% for repository in repositories %}
 
                     <tr>
-                        <td>{{ repository.name }}</td>
-                        <td>{{ repository.provider }}</td>
-                        <td>{{ repository.default_branch }}</td>
+                        <td>
+                            <strong>
+                                {{ repository.name }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ repository.provider }}
+                        </td>
+
+                        <td class="mono text-small">
+                            {{ repository.default_branch }}
+                        </td>
                     </tr>
 
-                {% endfor %}
+                    {% endfor %}
 
                 </tbody>
 
             </table>
 
-            {% else %}
-
-            <div class="empty">
-                No repositories configured.
-            </div>
-
-            {% endif %}
-
         </div>
 
-        <div class="panel">
+        {% else %}
 
-            <h2>Workspaces</h2>
+        <div class="empty-state">
+            No repositories configured.
+        </div>
 
-            {% if workspaces %}
+        {% endif %}
 
-            <table>
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+            <h2 class="card-title">Workspaces</h2>
+        </div>
+
+        {% if workspaces %}
+
+        <div class="table-wrap">
+
+            <table class="data-table">
 
                 <thead>
                     <tr>
@@ -325,36 +313,48 @@
 
                 <tbody>
 
-                {% for workspace in workspaces %}
+                    {% for workspace in workspaces %}
 
                     <tr>
-                        <td>{{ workspace.name }}</td>
-                        <td>{{ workspace.repository_name or "-" }}</td>
-                        <td>{{ workspace.branch or "-" }}</td>
-                        <td class="status">
-                            {{ workspace.status }}
+                        <td>
+                            <strong>
+                                {{ workspace.name }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ workspace.repository_name or "—" }}
+                        </td>
+
+                        <td class="mono text-small">
+                            {{ workspace.branch or "—" }}
+                        </td>
+
+                        <td>
+                            <span class="badge badge-neutral">
+                                {{ workspace.status }}
+                            </span>
                         </td>
                     </tr>
 
-                {% endfor %}
+                    {% endfor %}
 
                 </tbody>
 
             </table>
 
-            {% else %}
-
-            <div class="empty">
-                No workspaces configured.
-            </div>
-
-            {% endif %}
-
         </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            No workspaces configured.
+        </div>
+
+        {% endif %}
 
     </div>
 
-</main>
+</div>
 
-</body>
-</html>
+{% endblock %}

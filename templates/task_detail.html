@@ -1,272 +1,279 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
 
-    <title>{{ task.title }} - Appian AI Lab</title>
+{% block title %}
+{{ task.title }} - Appian AI Lab
+{% endblock %}
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f6f8;
-            color: #202124;
-        }
+{% block content %}
 
-        header {
-            background: #1f2937;
-            padding: 18px 28px;
-        }
+<div class="page-header">
 
-        header a {
-            color: white;
-            text-decoration: none;
-            margin-right: 24px;
-        }
+    <div>
 
-        main {
-            max-width: 1500px;
-            margin: auto;
-            padding: 28px;
-        }
+        <div class="breadcrumb">
+            <a href="/projects">Projects</a>
+            <span>/</span>
 
-        .layout {
-            display: grid;
-            grid-template-columns: minmax(0, 2fr) 360px;
-            gap: 20px;
-        }
+            <a href="/projects/{{ task.project_id }}">
+                {{ task.project_name }}
+            </a>
 
-        .panel {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.08);
-        }
+            <span>/</span>
+            <span>Task #{{ task.id }}</span>
+        </div>
 
-        .conversation {
-            display: flex;
-            flex-direction: column;
-            min-height: 680px;
-        }
+        <div class="row">
 
-        .conversation-header {
-            padding: 20px 22px;
-            border-bottom: 1px solid #eee;
-        }
+            <h1 class="page-title">
+                {{ task.title }}
+            </h1>
 
-        .messages {
-            flex: 1;
-            padding: 22px;
-        }
+            <span class="badge badge-neutral">
+                {{ task.status }}
+            </span>
 
-        .message {
-            max-width: 80%;
-            padding: 14px 16px;
-            margin-bottom: 16px;
-            border-radius: 10px;
-            line-height: 1.5;
-            white-space: pre-wrap;
-        }
+        </div>
 
-        .message-user {
-            margin-left: auto;
-            background: #dbeafe;
-        }
+        <p class="page-description">
+            {{ task.objective or "No objective defined." }}
+        </p>
 
-        .message-agent {
-            margin-right: auto;
-            background: #f3f4f6;
-        }
+    </div>
 
-        .role {
-            font-size: 12px;
-            font-weight: bold;
-            color: #666;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
+</div>
 
-        .composer {
-            padding: 18px;
-            border-top: 1px solid #eee;
-        }
 
-        textarea {
-            width: 100%;
-            box-sizing: border-box;
-            min-height: 90px;
-            padding: 12px;
-            resize: vertical;
-            font-family: inherit;
-        }
+<div class="task-layout">
 
-        button {
-            margin-top: 10px;
-            padding: 10px 18px;
-            cursor: pointer;
-        }
+    <div class="card conversation-card">
 
-        .sidebar {
-            padding: 22px;
-        }
+        <div class="card-header">
 
-        .label {
-            color: #777;
-            font-size: 12px;
-            margin-top: 18px;
-        }
+            <div>
+                <h2 class="card-title">
+                    Conversation
+                </h2>
 
-        .value {
-            margin-top: 4px;
-            word-break: break-word;
-        }
-
-        .status {
-            font-weight: bold;
-        }
-
-        .waiting {
-            margin-top: 22px;
-            padding: 12px;
-            background: #fef3c7;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .empty {
-            color: #777;
-            text-align: center;
-            margin-top: 100px;
-        }
-    </style>
-</head>
-
-<body>
-
-<header>
-    <a href="/">Dashboard</a>
-    <a href="/projects">Projects</a>
-    <a href="/projects/{{ task.project_id }}">
-        {{ task.project_name }}
-    </a>
-</header>
-
-<main>
-
-    <h1>#{{ task.id }} · {{ task.title }}</h1>
-
-    <div class="layout">
-
-        <div class="panel conversation">
-
-            <div class="conversation-header">
-                <strong>Conversation</strong>
-            </div>
-
-            <div class="messages">
-
-                {% if messages %}
-
-                    {% for message in messages %}
-
-                    <div class="message {% if message.role == 'user' %}message-user{% else %}message-agent{% endif %}">
-
-                        <div class="role">
-                            {{ message.role }}
-                        </div>
-
-                        {{ message.content }}
-
-                    </div>
-
-                    {% endfor %}
-
-                {% else %}
-
-                    <div class="empty">
-                        No messages yet. Add context or instructions below.
-                    </div>
-
-                {% endif %}
-
-            </div>
-
-            <div class="composer">
-
-                <form
-                    method="post"
-                    action="/tasks/{{ task.id }}/messages"
-                >
-
-                    <textarea
-                        name="content"
-                        required
-                        placeholder="Añade información, requisitos o instrucciones a esta tarea..."
-                    ></textarea>
-
-                    <button type="submit">
-                        Send
-                    </button>
-
-                </form>
-
+                <div class="text-small muted">
+                    Persistent conversation for this task
+                </div>
             </div>
 
         </div>
 
-        <div class="panel sidebar">
 
-            <h2>Task</h2>
+        <div class="conversation-messages">
 
-            <div class="label">Status</div>
-            <div class="value status">
-                {{ task.status }}
-            </div>
+            {% if messages %}
 
-            <div class="label">Type</div>
-            <div class="value">
-                {{ task.task_type }}
-            </div>
+                {% for message in messages %}
 
-            <div class="label">Project</div>
-            <div class="value">
-                {{ task.project_name }}
-            </div>
+                <div
+                    class="chat-message
+                    {% if message.role == 'user' %}
+                    chat-message-user
+                    {% else %}
+                    chat-message-agent
+                    {% endif %}"
+                >
 
-            <div class="label">Workspace</div>
-            <div class="value">
-                {{ task.workspace_name or "Not assigned" }}
-            </div>
+                    <div class="chat-role">
+                        {% if message.role == "user" %}
+                            You
+                        {% else %}
+                            {{ message.role }}
+                        {% endif %}
+                    </div>
 
-            <div class="label">Agent</div>
-            <div class="value">
-                {{ task.agent_name or "Not assigned" }}
-            </div>
+                    <div class="chat-content">
+                        {{ message.content }}
+                    </div>
 
-            <div class="label">Model</div>
-            <div class="value">
-                {{ task.model_name or "Not assigned" }}
-            </div>
+                </div>
 
-            <div class="label">Objective</div>
-            <div class="value">
-                {{ task.objective or "-" }}
-            </div>
+                {% endfor %}
 
-            {% if not task.agent_id %}
+            {% else %}
 
-            <div class="waiting">
-                No agent is assigned. Messages will be preserved
-                and processed when an agent becomes available.
+            <div class="empty-state">
+
+                <div class="empty-state-icon">
+                    ◇
+                </div>
+
+                <p class="empty-state-title">
+                    Conversation hasn't started
+                </p>
+
+                <p class="empty-state-description">
+                    Add context, requirements or instructions
+                    for this task below.
+                </p>
+
             </div>
 
             {% endif %}
 
         </div>
 
+
+        <div class="conversation-composer">
+
+            <form
+                method="post"
+                action="/tasks/{{ task.id }}/messages"
+            >
+
+                <textarea
+                    class="textarea composer-input"
+                    name="content"
+                    required
+                    placeholder="Ask, clarify or provide additional instructions..."
+                ></textarea>
+
+                <div class="composer-actions">
+
+                    <span class="text-small muted">
+                        Messages remain part of this task.
+                    </span>
+
+                    <button
+                        class="btn btn-primary"
+                        type="submit"
+                    >
+                        Send
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
     </div>
 
-</main>
 
-</body>
-</html>
+    <div class="stack">
+
+        <div class="card">
+
+            <div class="card-header">
+                <h2 class="card-title">
+                    Task
+                </h2>
+            </div>
+
+            <div class="card-body">
+
+                <div class="detail-list">
+
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            Type
+                        </div>
+
+                        <div class="detail-value">
+                            {{ task.task_type }}
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            Workspace
+                        </div>
+
+                        <div class="detail-value">
+                            {{ task.workspace_name or "Not assigned" }}
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            Agent
+                        </div>
+
+                        <div class="detail-value">
+                            {{ task.agent_name or "Not assigned" }}
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            Model
+                        </div>
+
+                        <div class="detail-value">
+                            {{ task.model_name or "Not assigned" }}
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            Compute preference
+                        </div>
+
+                        <div class="detail-value">
+                            {{ task.preferred_compute_name or "Auto" }}
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-header">
+                <h2 class="card-title">
+                    Execution
+                </h2>
+            </div>
+
+            <div class="card-body">
+
+                {% if not task.agent_id %}
+
+                <div class="readiness-item">
+
+                    <span class="readiness-icon pending">
+                        ○
+                    </span>
+
+                    <div>
+                        <strong>Waiting for configuration</strong>
+
+                        <div class="text-small muted">
+                            No agent has been assigned yet.
+                        </div>
+                    </div>
+
+                </div>
+
+                {% else %}
+
+                <div class="readiness-item">
+
+                    <span class="readiness-icon success">
+                        ✓
+                    </span>
+
+                    <div>
+                        <strong>Agent assigned</strong>
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
